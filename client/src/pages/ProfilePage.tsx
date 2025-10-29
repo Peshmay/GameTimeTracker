@@ -33,20 +33,16 @@ export default function ProfilePage() {
   };
 
   return (
-   <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-blue-200">
-  <div
-    className="bg-white shadow-xl rounded-2xl p-8 border border-blue-100"
-    style={{ width: "360px", height: "520px" }}
-  >
-    <h2 className="text-[32px] font-bold text-center text-blue-700 mb-6">
-      Welcome
-    </h2>
+    // Page background: plain light (no purple)
+    <div className="flex justify-center items-center min-h-screen bg-white">
+      {/* Dark card like your screenshot */}
+      <div className="w-[360px] h-[520px] rounded-xl shadow-2xl bg-[#252525] text-white p-6">
+        <h2 className="text-[24px] font-bold text-center mb-4 opacity-90">Register</h2>
 
-
-        <form onSubmit={submit} className="grid gap-3 px-4">
+        <form onSubmit={submit} className="grid gap-3">
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-gray-300 mb-1">
               Email address *
             </label>
             <input
@@ -55,14 +51,14 @@ export default function ProfilePage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2"
+              className="w-full rounded-md border border-[#3a3a3a] bg-[#1e1e1e] text-gray-100 placeholder-gray-400 p-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
 
-          {/* First + Last Name */}
+          {/* First + Last name */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-gray-300 mb-1">
                 First Name *
               </label>
               <input
@@ -70,11 +66,11 @@ export default function ProfilePage() {
                 value={firstName}
                 onChange={(e) => setFirst(e.target.value)}
                 placeholder="Jane"
-                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2"
+                className="w-full rounded-md border border-[#3a3a3a] bg-[#1e1e1e] text-gray-100 placeholder-gray-400 p-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-gray-300 mb-1">
                 Last Name *
               </label>
               <input
@@ -82,46 +78,47 @@ export default function ProfilePage() {
                 value={lastName}
                 onChange={(e) => setLast(e.target.value)}
                 placeholder="Doe"
-                className="w-full rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2"
+                className="w-full rounded-md border border-[#3a3a3a] bg-[#1e1e1e] text-gray-100 placeholder-gray-400 p-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
           </div>
 
-          {/* Profile Picture */}
+          {/* Profile picture */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-gray-300 mb-1">
               Profile Picture
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="block w-full text-sm text-gray-700"
+              className="block w-full text-sm text-gray-200 file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-[#2c2c2c] file:text-gray-200 file:hover:bg-[#333]"
             />
           </div>
 
-          {/* Submit Button */}
+          {/* Register button – gradient like your photo */}
           <div className="pt-3">
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-md transition duration-200 shadow-md"
+              className="w-full rounded-md py-2 font-semibold text-white shadow-md
+                         bg-gradient-to-r from-[#6a5acd] to-[#ff6aa0]
+                         hover:from-[#5a4ad1] hover:to-[#ff5e98] transition"
             >
               REGISTER
             </button>
           </div>
 
-          {/* Error Message */}
           {error && (
-            <p className="text-red-500 text-sm text-center font-medium">{error}</p>
+            <p className="text-red-400 text-sm text-center">{error}</p>
           )}
         </form>
 
-        {/* Created user preview */}
+        {/* Created user preview (dark) */}
         {created && (
-          <div className="grid gap-3 px-4 pt-6">
-            <div className="flex items-center gap-3 bg-blue-100 text-gray-800 p-3 rounded-lg border border-blue-200 shadow-inner">
+          <div className="mt-5">
+            <div className="flex items-center gap-3 bg-[#1e1e1e] border border-[#333] p-3 rounded-lg">
               <img
-                className="w-16 h-16 rounded-full object-cover border-2 border-blue-400"
+                className="w-14 h-14 rounded-full object-cover border-2 border-[#333]"
                 src={
                   created.profilePic
                     ? `http://localhost:4000${created.profilePic}`
@@ -130,10 +127,10 @@ export default function ProfilePage() {
                 alt="Profile"
               />
               <div>
-                <div className="font-medium text-lg">
+                <div className="font-medium">
                   {created.firstName} {created.lastName}
                 </div>
-                <div className="text-sm opacity-80">{created.email}</div>
+                <div className="text-xs text-gray-300">{created.email}</div>
               </div>
             </div>
           </div>
