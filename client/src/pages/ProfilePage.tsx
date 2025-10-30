@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { getRandomAvatar } from "../utils/avatars";
+
+const avatar = getRandomAvatar();
 
 export default function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -18,7 +21,11 @@ export default function ProfilePage() {
       data.append("email", email);
       data.append("firstName", firstName);
       data.append("lastName", lastName);
-      if (file) data.append("profilePic", file);
+      if (file) {
+        data.append("profilePic", file);
+      } else {
+        data.append("avatarUrl", getRandomAvatar());
+      }
 
       const res = await axios.post("http://localhost:4000/api/users", data);
       setCreated(res.data);

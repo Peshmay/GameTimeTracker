@@ -14,6 +14,19 @@ const users = [
 
 const games = ["Chess", "Tetris", "Sudoku", "Snake"];
 
+const avatars = [
+  "../assets/avatars/fox.png",
+  "../assets/avatars/wolf.png",
+  "../assets/avatars/cat.png",
+  "../assets/avatars/bear.png",
+  "../assets/avatars/rabbit.png",
+  "../assets/avatars/tiger.png",
+  "../assets/avatars/owl.png",
+  "../assets/avatars/dragon.png",
+  "../assets/avatars/snake.png",
+  "../assets/avatars/frog.png",
+];
+
 async function main() {
   for (const g of games) {
     await prisma.game.upsert({
@@ -23,7 +36,8 @@ async function main() {
     });
   }
 
-  for (const [email, firstName, lastName] of users) {
+  for (let i = 0; i < users.length; i++) {
+    const [email, firstName, lastName] = users[i];
     await prisma.user.upsert({
       where: { email },
       update: {},
@@ -31,7 +45,7 @@ async function main() {
         email,
         firstName,
         lastName,
-        profilePic: "/uploads/default.png",
+        profilePic: avatars[i % avatars.length], // assign avatar in a round-robin way
       },
     });
   }

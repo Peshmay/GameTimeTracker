@@ -6,6 +6,7 @@ import UsersPage from "./pages/UsersPage";
 import PlayPage from "./pages/PlayPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import UserDetailsPage from "./pages/UserDetailsPage";
+import TimerPage from "./pages/TimerPage";
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/users" element={<UsersPage />} />
             <Route path="/users/:id" element={<UserDetailsPage />} />
             <Route path="/play" element={<PlayPage />} />
+            <Route path="/play/timer" element={<TimerPage />} />
             <Route path="/stats" element={<StatisticsPage />} />
           </Routes>
         </div>

@@ -2,15 +2,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import genres from "../assets/genres";
 import GameCard from "../components/GameCard";
+import { useNavigate } from "react-router-dom";
+import { getAvatarForUser } from "../utils/avatars"; // returns "/avatars/...png"
 
 export default function PlayPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [games, setGames] = useState<any[]>([]); // backend games used for timing
   const [userId, setUserId] = useState<number | undefined>();
   const [gameId, setGameId] = useState<number | undefined>();
-  const [sessionId, setSessionId] = useState<number | null>(null);
-  const [playing, setPlaying] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
+
+  // keep these states as-is (not used once we navigate to TimerPage)
+  const [sessionId] = useState<number | null>(null);
+  const [playing] = useState(false);
+  const [elapsed] = useState(0);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -19,23 +25,28 @@ export default function PlayPage() {
     })();
   }, []);
 
-  useEffect(() => {
-    let t: any;
-    if (playing) t = setInterval(() => setElapsed((e) => e + 1), 1000);
-    return () => clearInterval(t);
-  }, [playing]);
+  // 👉 NEW: Start now just navigates to /play/timer with selected user+game
+  function start() {
+    if (!userId || !gameId) {
+      alert("Select user and game first.");
+      return;
+    }
+    const user = users.find((u) => u.id === userId);
+    const game = games.find((g) => g.id === gameId);
+    if (!user || !game) return;
 
-  async function start() {
-    const res = await axios.post("http://localhost:4000/api/sessions/start", { userId, gameId });
-    setSessionId(res.data.id);
-    setElapsed(0);
-    setPlaying(true);
+    // resolve avatar (uploaded file from backend or cute local avatar)
+    const avatar = user.profilePic?.startsWith("/uploads")
+      ? `http://localhost:4000${user.profilePic}`
+      : user.profilePic || getAvatarForUser(user.id);
+
+    navigate("/play/timer", { state: { user, game, avatar } });
   }
 
   async function stop() {
-    await axios.patch("http://localhost:4000/api/sessions/stop", { id: sessionId });
-    setPlaying(false);
-    setSessionId(null);
+    // no-op now (TimerPage owns stop). Kept to avoid changing your JSX structure.
+    // If you keep a Stop button here, it won't be shown because "playing" is false.
+    return;
   }
 
   // OPTIONAL: clicking a showcase card can pre-select the backend game by name match.
@@ -46,16 +57,15 @@ export default function PlayPage() {
 
   // Compute “(N)” in the title
   const totalShowcase = genres.length; // one card per genre (first game)
-  // If you want 2x2 like your image, we’ll render exactly 4 cards below.
 
   return (
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Play Game</h2>
 
-      {/* Top controls */}
+      {/* Top controls (same line) */}
       <div className="flex flex-wrap items-center gap-3">
         <select
-          className="border p-2 rounded"
+          className="border p-2 rounded min-w-[180px]"
           value={userId ?? ""}
           onChange={(e) => setUserId(Number(e.target.value))}
         >
@@ -68,7 +78,7 @@ export default function PlayPage() {
         </select>
 
         <select
-          className="border p-2 rounded"
+          className="border p-2 rounded min-w-[180px]"
           value={gameId ?? ""}
           onChange={(e) => setGameId(Number(e.target.value))}
         >
@@ -79,25 +89,17 @@ export default function PlayPage() {
             </option>
           ))}
         </select>
-      </div>
 
-      <div className="flex items-center gap-3">
-        {!playing ? (
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-40 flex items-center gap-2"
-            onClick={start}
-            disabled={!userId || !gameId}
-          >
-            <span>▶</span> Start
-          </button>
-        ) : (
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded flex items-center gap-2"
-            onClick={stop}
-          >
-            ⏹ Stop
-          </button>
-        )}
+        {/* Always shows Start (TimerPage handles the actual session) */}
+        <button
+          className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-40 flex items-center gap-2"
+          onClick={start}
+          disabled={!userId || !gameId}
+        >
+          <span>▶</span> Start
+        </button>
+
+        {/* kept for layout compatibility; won't render since playing=false */}
         {playing && <span className="text-gray-600">Playing… {elapsed}s</span>}
       </div>
 

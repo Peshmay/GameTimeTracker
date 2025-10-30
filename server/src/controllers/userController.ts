@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import { Request, Response } from "express";
-const prisma = new PrismaClient();
+import { prisma } from "../utils/prisma";
 
 const userSchema = z.object({
   email: z.string().email(),
@@ -37,4 +37,14 @@ export async function getUserById(req: Request, res: Response) {
   });
   if (!user) return res.status(404).json({ message: "Not found" });
   res.json(user);
+}
+
+export async function deleteUser(req: Request, res: Response) {
+  const id = Number(req.params.id);
+  try {
+    await prisma.user.delete({ where: { id } });
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting user" });
+  }
 }
