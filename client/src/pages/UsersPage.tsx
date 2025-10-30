@@ -18,11 +18,20 @@ export default function UsersPage() {
   }
 
   async function handleDelete(id: number) {
-    if (confirm("Are you sure you want to delete this user?")) {
-      await axios.delete(`http://localhost:4000/api/users/${id}`);
-      fetchUsers();
-    }
+  if (!confirm("Delete this user? This cannot be undone.")) return;
+
+  try {
+    await axios.delete(`http://localhost:4000/api/users/${id}`);
+    fetchUsers(); // refresh the list
+  } catch (err: any) {
+    console.error("Delete failed:", err);
+    alert(
+      err?.response?.data?.message ||
+        "Could not delete this user. They might have existing game sessions."
+    );
   }
+}
+
 
   // Decide the correct image URL:
   // - If backend stored an upload -> prefix with API origin

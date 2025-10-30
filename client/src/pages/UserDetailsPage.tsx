@@ -75,7 +75,7 @@ export default function UserDetailsPage() {
             ))}
           </tbody>
         </table>
-      </div>
-    </div>
+      </div>    
+    </div>  
   );
 }

@@ -1,24 +1,42 @@
-import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { Request, Response } from "express";
+import { z } from "zod";
 import { prisma } from "../utils/prisma";
 
+// Accepts file OR a string path (e.g., "/avatars/fox.png")
 const userSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
+  profilePic: z.string().optional(), // allow client-sent avatar string
 });
 
 export async function createUser(req: Request, res: Response) {
   try {
-    const body = userSchema.parse(req.body);
+    // parse base fields + optional profilePic string
+    const parsed = userSchema.parse({
+      ...req.body,
+      profilePic: req.body.profilePic,
+    });
+
+    // if file uploaded -> use /uploads/<filename>
+    // else if client sent an avatar path -> use that
+    // else -> default image
     const profilePic = req.file
       ? `/uploads/${req.file.filename}`
-      : "/uploads/default.png";
-    const user = await prisma.user.create({ data: { ...body, profilePic } });
+      : parsed.profilePic || "/uploads/default.png";
+
+    const user = await prisma.user.create({
+      data: {
+        email: parsed.email,
+        firstName: parsed.firstName,
+        lastName: parsed.lastName,
+        profilePic,
+      },
+    });
+
     res.json(user);
   } catch (e: any) {
-    res.status(400).json({ error: e.message });
+    res.status(400).json({ message: e.message || "Invalid data" });
   }
 }
 
@@ -39,12 +57,16 @@ export async function getUserById(req: Request, res: Response) {
   res.json(user);
 }
 
+// Delete with safe handling if sessions exist
 export async function deleteUser(req: Request, res: Response) {
   const id = Number(req.params.id);
   try {
+    // If your schema doesn’t have onDelete: Cascade, remove sessions first:
+    await prisma.session.deleteMany({ where: { userId: id } });
     await prisma.user.delete({ where: { id } });
     res.json({ message: "User deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: "Error deleting user" });
+  } catch (error: any) {
+    // If you prefer, detect Prisma P2003 here and return 409
+    res.status(500).json({ message: "Error deleting user" });
   }
 }

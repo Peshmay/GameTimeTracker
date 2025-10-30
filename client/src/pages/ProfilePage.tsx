@@ -24,7 +24,7 @@ export default function ProfilePage() {
       if (file) {
         data.append("profilePic", file);
       } else {
-        data.append("avatarUrl", getRandomAvatar());
+        data.append("profilePic", getRandomAvatar());
       }
 
       const res = await axios.post("http://localhost:4000/api/users", data);
