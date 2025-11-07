@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+Frontend Setup
+cd client
+npm install
+npm run dev
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend runs at:
+http://localhost:5173
 
-Currently, two official plugins are available:
+## 🚀 Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The frontend is built using **React**, **TypeScript**, and **TailwindCSS**, and communicates with a Node.js + Express backend through REST APIs.
 
-## React Compiler
+It includes pages for:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- User registration
+- Viewing all users
+- Choosing a game
+- Tracking gameplay time
+- Displaying statistics with charts
 
-## Expanding the ESLint configuration
+## 🧩 Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🧍 User Registration
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Register with **Email**, **First Name**, and optional **Profile Picture**.
+- If no image is uploaded, a random avatar is assigned.
+- Uses **Zod** for input validation.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 👥 Users Page
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Displays all registered users with photos and names.
+- Option to add or delete users.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🕹️ Choose Game
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- Displays 4 interactive game cards.
+- Clicking a card starts a game timer.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### ⏱️ Game Timer
+
+- Start/Stop buttons control session timer.
+- User info displayed on screen.
+- After stopping, the session is sent to backend.
+
+### 📊 Statistics
+
+- Recharts visualizations:
+  - Total playtime per game
+  - Weekly trends
+  - Leaderboard of top players
+- Dropdowns for game/user selection.
+
+### 🌤️ Weather Widget
+
+- Displays **current temperature**, **city**, and **date**.
+- Fetches from the backend weather endpoint.
+
+---
+
+## ⚙️ Setup & Run
+
+### 1️⃣ Install dependencies
+
+```bash
+cd client
+npm install
 ```

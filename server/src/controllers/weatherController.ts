@@ -1,18 +1,43 @@
+// server/src/controllers/weatherController.ts
+import "dotenv/config";
 import { Request, Response } from "express";
-import fetch from "node-fetch";
+
+const API_KEY = process.env.WEATHER_API_KEY || process.env.OPENWEATHER_API_KEY;
 
 export async function getWeather(req: Request, res: Response) {
   try {
-    const city = (req.query.city as string) || "Gothenburg";
-    const key = process.env.OPENWEATHER_API_KEY || "fetch";
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
-      city
-    )}&units=metric&appid=${key}`;
-    const r = await fetch(url);
+    if (!API_KEY) {
+      return res
+        .status(500)
+        .json({
+          error:
+            "Missing WEATHER_API_KEY (or OPENWEATHER_API_KEY) in environment.",
+        });
+    }
+
+    const city = (req.query.city as string) || "Uddevalla";
+
+    const url = new URL("https://api.openweathermap.org/data/2.5/weather");
+    url.searchParams.set("q", city);
+    url.searchParams.set("units", "metric");
+    url.searchParams.set("appid", API_KEY);
+
+    const r = await fetch(url.toString());
+    if (!r.ok) {
+      // bubble up OpenWeather error payload for easier debugging
+      const text = await r.text();
+      return res
+        .status(r.status)
+        .json({ error: "OpenWeather error", details: text });
+    }
+
     const data: any = await r.json();
-    if (!r.ok) return res.status(400).json({ error: data });
-    res.json({ city: data.name, temp: data.main?.temp });
+    return res.json({
+      city: data?.name ?? city,
+      temp: data?.main?.temp ?? null,
+      date: new Date().toISOString(), // let the client format to local time
+    });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    return res.status(500).json({ error: e.message || "Weather fetch failed" });
   }
 }
